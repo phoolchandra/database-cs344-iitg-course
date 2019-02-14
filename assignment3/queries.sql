@@ -1,3 +1,62 @@
+
+-- ans 1 using join
+select distinct sname
+from student
+right join course_student on student.sid = course_student.sid
+where cid not in
+(
+select cid
+from course_student 
+where sid  = 1
+);
+
+
+-- ans 2
+
+SELECT * FROM student as s
+	WHERE NOT EXISTS (
+		SELECT e.cid FROM course_student as e
+		WHERE e.sid = 1
+		AND cid NOT  IN (
+			SELECT e.cid FROM course_student as e
+			WHERE e.sid = s.sid 
+		)
+	) and sid != 1;
+
+
+-- Ans 3
+select distinct sname, course_student.cid
+from student
+right join course_student on student.sid = course_student.sid
+where cid in 
+(
+	select cid
+	from course_lecturer
+	where lid = 1 or lid = 2
+);
+
+-- ans 4
+select distinct sname, course_student.cid
+from student
+right join course_student on student.sid = course_student.sid
+where cid in 
+(
+	select cid
+	from course_lecturer
+	where lid = 1 and lid != 2
+);
+
+
+
+-- ans 5
+select sid
+from course_student
+where cid = 1 and marks > (
+select avg(marks)
+from course_student
+where cid = 2
+);
+
 -- ans 6
 select did,count(lid)
 from lecturer
@@ -42,8 +101,4 @@ inner join
 select count(sid) from course_student where cid = 2 and marks >=70
 union select count(sid) from course_student WHERE cid = 2 and marks<70 && marks>=40
 union select count(sid) from course_student WHERE cid = 2 and marks<40;
-
-
-
-
 
